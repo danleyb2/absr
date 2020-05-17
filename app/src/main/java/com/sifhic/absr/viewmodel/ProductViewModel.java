@@ -1,19 +1,3 @@
-/*
- * Copyright 2017, The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.sifhic.absr.viewmodel;
 
 import android.app.Application;
@@ -34,12 +18,12 @@ public class ProductViewModel extends AndroidViewModel {
 
     private final LiveData<ProductEntity> mObservableProduct;
 
-    private final int mProductId;
+    private final long mProductId;
 
     private final LiveData<List<CommentEntity>> mObservableComments;
 
     public ProductViewModel(@NonNull Application application, DataRepository repository,
-            final int productId) {
+            final long productId) {
         super(application);
         mProductId = productId;
 
@@ -69,11 +53,11 @@ public class ProductViewModel extends AndroidViewModel {
         @NonNull
         private final Application mApplication;
 
-        private final int mProductId;
+        private final long mProductId;
 
         private final DataRepository mRepository;
 
-        public Factory(@NonNull Application application, int productId) {
+        public Factory(@NonNull Application application, long productId) {
             mApplication = application;
             mProductId = productId;
             mRepository = ((BasicApp) application).getRepository();

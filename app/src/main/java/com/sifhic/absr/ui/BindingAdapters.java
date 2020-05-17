@@ -1,5 +1,3 @@
-
-
 package com.sifhic.absr.ui;
 
 import androidx.databinding.BindingAdapter;

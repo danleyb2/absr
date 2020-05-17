@@ -1,5 +1,3 @@
-
-
 package com.sifhic.absr.ui;
 
 import androidx.annotation.NonNull;
@@ -58,9 +56,9 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                     Product newProduct = productList.get(newItemPosition);
                     Product oldProduct = mProductList.get(oldItemPosition);
                     return newProduct.getId() == oldProduct.getId()
-                            && TextUtils.equals(newProduct.getDescription(), oldProduct.getDescription())
-                            && TextUtils.equals(newProduct.getName(), oldProduct.getName())
-                            && newProduct.getPrice() == oldProduct.getPrice();
+                            && TextUtils.equals(newProduct.getAsin(), oldProduct.getAsin())
+                            && TextUtils.equals(newProduct.getLabel(), oldProduct.getLabel())
+                            && newProduct.getRank() == oldProduct.getRank();
                 }
             });
             mProductList = productList;

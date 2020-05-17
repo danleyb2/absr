@@ -57,11 +57,16 @@ dependencies {
     implementation deps.material
     implementation deps.cardview
 
+    implementation("com.squareup.okhttp3:okhttp:4.5.0")
+    implementation 'org.jsoup:jsoup:1.13.1'
+
     // Architecture components
     implementation deps.lifecycle.runtime
     annotationProcessor deps.lifecycle.compiler
     implementation deps.room.runtime
+    implementation deps.work.runtime
     annotationProcessor deps.room.compiler
+
 
     // Android Testing Support Library's runner and rules
     androidTestImplementation deps.atsl.core

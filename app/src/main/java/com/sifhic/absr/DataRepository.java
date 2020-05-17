@@ -4,7 +4,9 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import com.sifhic.absr.db.AppDatabase;
 import com.sifhic.absr.db.entity.CommentEntity;
+import com.sifhic.absr.db.entity.GroupEntity;
 import com.sifhic.absr.db.entity.ProductEntity;
+import com.sifhic.absr.model.Product;
 
 import java.util.List;
 
@@ -41,6 +43,17 @@ public class DataRepository {
         return sInstance;
     }
 
+    // You must call this on a non-UI thread or your app will throw an exception. Room ensures
+    // that you're not doing any long running operations on the main thread, blocking the UI.
+    public void insertProduct(GroupEntity groupEntity, List<ProductEntity> productEntityList){
+        mDatabase.getQueryExecutor().execute(() -> {
+
+            mDatabase.groupDao().createGroupAndProducts(groupEntity,productEntityList) ;
+
+        });
+    }
+
+
     /**
      * Get the list of products from the database and get notified when the data changes.
      */
@@ -48,15 +61,28 @@ public class DataRepository {
         return mObservableProducts;
     }
 
-    public LiveData<ProductEntity> loadProduct(final int productId) {
+    public LiveData<ProductEntity> loadProduct(final long productId) {
         return mDatabase.productDao().loadProduct(productId);
     }
 
-    public LiveData<List<CommentEntity>> loadComments(final int productId) {
+    public ProductEntity loadProductSync(final long productId) {
+        return mDatabase.productDao().loadProductSync(productId);
+    }
+
+    public void updateProductSync(final long productId,int rank) {
+        mDatabase.productDao().update(productId,rank);
+    }
+
+    public void updateProductSync(final long productId, boolean updated) {
+        mDatabase.productDao().update(productId, updated);
+    }
+
+    public GroupEntity loadGroup(final long groupId) {
+        return mDatabase.groupDao().loadGroupSync(groupId);
+    }
+
+    public LiveData<List<CommentEntity>> loadComments(final long productId) {
         return mDatabase.commentDao().loadComments(productId);
     }
 
-    public LiveData<List<ProductEntity>> searchProducts(String query) {
-        return mDatabase.productDao().searchAllProducts(query);
-    }
 }

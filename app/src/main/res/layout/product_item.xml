@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
@@ -31,20 +29,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/cd_product_name"
-                android:text="@{product.name}"/>
+                android:text="@{product.label}"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_marginEnd="5dp"
-                android:text="@{@string/product_price(product.price)}"/>
+                android:text="@{@string/product_price(product.rank)}"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/name"
-                android:text="@{product.description}"/>
+                android:text="@{product.asin}"/>
         </RelativeLayout>
 
     </androidx.cardview.widget.CardView>

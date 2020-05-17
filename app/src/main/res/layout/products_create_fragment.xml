@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <variable name="productsCreateViewModel"
+                  type="com.sifhic.absr.viewmodel.ProductsCreateViewModel"/>
+
+    </data>
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/cardview_light_background"
+            android:orientation="vertical">
+
+        <EditText
+                android:hint="Title"
+                android:text="@={productsCreateViewModel.groupTitle}"
+                android:inputType="text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        <EditText
+                android:hint="Category"
+                android:text="@={productsCreateViewModel.groupCategory}"
+                android:inputType="text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/cardview_light_background"
+                android:orientation="horizontal">
+
+            <EditText
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:inputType="text"
+                    android:hint="Label"
+                    android:text="@={productsCreateViewModel.productLabel1}"
+                    android:layout_height="wrap_content"/>
+
+            <EditText
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:inputType="text"
+                    android:hint="Asin"
+                    android:text="@={productsCreateViewModel.productAsin1}"
+                    android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/cardview_light_background"
+                android:orientation="horizontal">
+
+            <EditText
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:inputType="text"
+                    android:hint="Label"
+                    android:text="@={productsCreateViewModel.productLabel2}"
+                    android:layout_height="wrap_content"/>
+
+            <EditText
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:inputType="text"
+                    android:hint="Asin"
+                    android:text="@={productsCreateViewModel.productAsin2}"
+                    android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/cardview_light_background"
+                android:orientation="horizontal">
+
+            <EditText
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:inputType="text"
+                    android:hint="Label"
+                    android:text="@={productsCreateViewModel.productLabel3}"
+                    android:layout_height="wrap_content"/>
+
+            <EditText
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:inputType="text"
+                    android:hint="Asin"
+                    android:text="@={productsCreateViewModel.productAsin3}"
+                    android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+        <Button
+                android:layout_width="match_parent"
+                android:id="@+id/products_save_btn"
+                android:text="Save"
+                android:layout_height="wrap_content"/>
+
+
+    </LinearLayout>
+</layout>

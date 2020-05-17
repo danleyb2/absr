@@ -1,69 +1,114 @@
-/*
- * Copyright 2017, The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.sifhic.absr.viewmodel;
 
 import android.app.Application;
 import android.text.TextUtils;
-
-import com.sifhic.absr.BasicApp;
-import com.sifhic.absr.DataRepository;
-import com.sifhic.absr.db.entity.ProductEntity;
-
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.arch.core.util.Function;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.Transformations;
+import androidx.work.*;
+import com.sifhic.absr.BasicApp;
+import com.sifhic.absr.DataRepository;
+import com.sifhic.absr.db.entity.ProductEntity;
+import com.sifhic.absr.model.Product;
+import com.sifhic.absr.workers.ScrapeWorker;
+
+import java.util.List;
+
+import static com.sifhic.absr.Constants.*;
+
 
 public class ProductListViewModel extends AndroidViewModel {
     private static final String QUERY_KEY = "QUERY";
 
     private final SavedStateHandle mSavedStateHandler;
     private final DataRepository mRepository;
+    private WorkManager mWorkManager;
+    private LiveData<List<WorkInfo>> mSavedWorkInfo;
+
     private final LiveData<List<ProductEntity>> mProducts;
 
     public ProductListViewModel(@NonNull Application application,
-            @NonNull SavedStateHandle savedStateHandle) {
+                                @NonNull SavedStateHandle savedStateHandle) {
         super(application);
         mSavedStateHandler = savedStateHandle;
-
         mRepository = ((BasicApp) application).getRepository();
+        mWorkManager = WorkManager.getInstance(application);
+
+        // This transformation makes sure that whenever the current work Id changes the WorkInfo
+        // the UI is listening to changes
+        mSavedWorkInfo = mWorkManager.getWorkInfosByTagLiveData(TAG_OUTPUT);
 
         // Use the savedStateHandle.getLiveData() as the input to switchMap,
         // allowing us to recalculate what LiveData to get from the DataRepository
         // based on what query the user has entered
-        mProducts = Transformations.switchMap(
-                savedStateHandle.getLiveData("QUERY", null),
-                (Function<CharSequence, LiveData<List<ProductEntity>>>) query -> {
-                    if (TextUtils.isEmpty(query)) {
-                        return mRepository.getProducts();
-                    }
-                    return mRepository.searchProducts("*" + query + "*");
-                });
+
+        mProducts = mRepository.getProducts();
     }
 
-    public void setQuery(CharSequence query) {
-        // Save the user's query into the SavedStateHandle.
-        // This ensures that we retain the value across process death
-        // and is used as the input into the Transformations.switchMap above
-        mSavedStateHandler.set(QUERY_KEY, query);
+    /**
+     * Getter method for mSavedWorkInfo
+     */
+    public LiveData<List<WorkInfo>> getOutputWorkInfo() {
+        return mSavedWorkInfo;
+    }
+
+
+    /**
+     * Creates the input data bundle which includes the Uri to operate on
+     *
+     * @return Data which contains the Image Uri as a String
+     */
+    private Data createInputDataForProduct(Product product) {
+        Data.Builder builder = new Data.Builder();
+        builder.putLong(KEY_IMAGE_URI, product.getId());
+
+        return builder.build();
+    }
+
+    public void refresh() {
+
+        WorkContinuation continuation = null;
+        // List<OneTimeWorkRequest> workRequests =  new ArrayList<>();
+
+        // Add WorkRequests to blur the image the number of times requested
+        for (Product product : mRepository.getProducts().getValue()) {
+            OneTimeWorkRequest.Builder blurBuilder = new OneTimeWorkRequest.Builder(ScrapeWorker.class);
+            blurBuilder.setInputData(createInputDataForProduct(product));
+            blurBuilder.addTag(TAG_OUTPUT); // This adds the tag
+
+            if (continuation == null) {
+                continuation = mWorkManager.beginUniqueWork(
+                        IMAGE_MANIPULATION_WORK_NAME,
+                        ExistingWorkPolicy.REPLACE,
+                        blurBuilder.build()
+                );
+            } else {
+                continuation = continuation.then(blurBuilder.build());
+            }
+
+            // workRequests.add(blurBuilder.build());
+
+        }
+
+        // Create charging constraint
+        Constraints constraints = new Constraints.Builder()
+                .setRequiresCharging(true)
+                .build();
+
+
+        // Start the work
+        if (continuation != null) continuation.enqueue();
+
+    }
+
+    /**
+     * Cancel work using the work's unique name
+     */
+    void cancelWork() {
+        mWorkManager.cancelUniqueWork(IMAGE_MANIPULATION_WORK_NAME);
     }
 
     /**

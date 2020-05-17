@@ -33,4 +33,18 @@ public class MainActivity extends AppCompatActivity {
                 .replace(R.id.fragment_container,
                         productFragment, null).commit();
     }
+
+    /** Shows the add product fragment */
+    public void showAddProduct() {
+
+        ProductsCreateFragment productsCreateFragment = ProductsCreateFragment.newInstance();
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .addToBackStack("productsCreate")
+                .replace(R.id.fragment_container,
+                        productsCreateFragment, null).commit();
+    }
+
+
 }
