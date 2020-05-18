@@ -7,21 +7,21 @@ import android.content.Context;
 
 import android.os.Build;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.WorkerThread;
-
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 import android.util.Log;
+import androidx.work.Data;
 import com.sifhic.absr.Constants;
 import com.sifhic.absr.R;
+import com.sifhic.absr.model.Product;
 
 import static com.sifhic.absr.Constants.CHANNEL_ID;
 import static com.sifhic.absr.Constants.DELAY_TIME_MILLIS;
+import static com.sifhic.absr.Constants.KEY_PRODUCT_ID;
 
 
-final class WorkerUtils {
+public final class WorkerUtils {
     private static final String TAG = WorkerUtils.class.getSimpleName();
 
     /**
@@ -76,6 +76,18 @@ final class WorkerUtils {
         } catch (InterruptedException e) {
             Log.d(TAG, e.getMessage());
         }
+    }
+
+
+    /**
+     * Creates the input data bundle which includes the Uri to operate on
+     *
+     * @return Data which contains the Image Uri as a String
+     */
+    public static Data createInputDataForProduct(Product product) {
+        Data.Builder builder = new Data.Builder();
+        builder.putLong(KEY_PRODUCT_ID, product.getId());
+        return builder.build();
     }
 
 

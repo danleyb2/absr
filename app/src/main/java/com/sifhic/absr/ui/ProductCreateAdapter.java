@@ -1,30 +1,22 @@
 package com.sifhic.absr.ui;
 
+import android.text.TextUtils;
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
-
 import androidx.recyclerview.widget.AsyncDifferConfig;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
-import android.text.TextUtils;
-import android.view.LayoutInflater;
-import android.view.ViewGroup;
-
-
-import com.sifhic.absr.databinding.ProductItemBinding;
-
 import com.sifhic.absr.R;
+import com.sifhic.absr.databinding.ProductItemCreateBinding;
 import com.sifhic.absr.db.entity.ProductEntity;
-import com.sifhic.absr.model.Product;
 
-public class ProductAdapter extends ListAdapter<ProductEntity, ProductAdapter.ProductViewHolder> {
+public class ProductCreateAdapter extends ListAdapter<ProductEntity, ProductCreateAdapter.ProductCreateViewHolder> {
 
-    @Nullable
-    private final ProductClickCallback mProductClickCallback;
 
-    ProductAdapter(@Nullable ProductClickCallback productClickCallback) {
+    ProductCreateAdapter() {
         super(new AsyncDifferConfig.Builder<>(new DiffUtil.ItemCallback<ProductEntity>() {
             @Override
             public boolean areItemsTheSame(@NonNull ProductEntity old,
@@ -46,30 +38,30 @@ public class ProductAdapter extends ListAdapter<ProductEntity, ProductAdapter.Pr
 
             }
         }).build());
-        mProductClickCallback = productClickCallback;
+
     }
 
     @Override
     @NonNull
-    public ProductViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        ProductItemBinding binding = DataBindingUtil
-                .inflate(LayoutInflater.from(parent.getContext()), R.layout.product_item,
+    public ProductCreateViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        ProductItemCreateBinding binding = DataBindingUtil
+                .inflate(LayoutInflater.from(parent.getContext()), R.layout.product_item_create,
                         parent, false);
-        binding.setCallback(mProductClickCallback);
-        return new ProductViewHolder(binding);
+
+        return new ProductCreateViewHolder(binding);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ProductViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ProductCreateViewHolder holder, int position) {
         holder.binding.setProduct(getItem(position));
         holder.binding.executePendingBindings();
     }
 
-    static class ProductViewHolder extends RecyclerView.ViewHolder {
+    static class ProductCreateViewHolder extends RecyclerView.ViewHolder {
 
-        final ProductItemBinding binding;
+        final ProductItemCreateBinding binding;
 
-        public ProductViewHolder(ProductItemBinding binding) {
+        public ProductCreateViewHolder(ProductItemCreateBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
         }

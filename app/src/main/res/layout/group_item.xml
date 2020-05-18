@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable name="group"
+                  type="com.sifhic.absr.model.Group"/>
+        <variable name="callback"
+                  type="com.sifhic.absr.ui.GroupClickCallback"/>
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/product_item_min_height"
+        android:onClick="@{() ->  callback.onClick(group)}"
+        android:orientation="horizontal"
+        android:layout_marginStart="@dimen/item_horizontal_margin"
+        android:layout_marginEnd="@dimen/item_horizontal_margin"
+        app:cardUseCompatPadding="true">
+
+        <RelativeLayout
+                android:layout_marginStart="@dimen/item_horizontal_margin"
+                android:layout_marginEnd="@dimen/item_horizontal_margin"
+                android:layout_width="match_parent"
+                android:layout_height="90dp">
+
+            <TextView
+                    android:id="@+id/name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/cd_product_name"
+                    android:text="@{group.title}"/>
+
+            <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/name"
+                    android:text="@{group.category}"/>
+
+            <Button android:layout_width="wrap_content"
+                    android:text="Refresh"
+                    android:onClick="@{() ->  callback.onRefreshClick(group)}"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/refresh_btn"
+                    android:layout_alignParentBottom="true"/>
+
+            <Button android:layout_width="wrap_content"
+                    android:text="Edit"
+                    android:onClick="@{() ->  callback.onEditClick(group)}"
+                    android:layout_height="wrap_content"
+
+                    android:id="@+id/edit_btn"
+                    android:layout_toEndOf="@+id/refresh_btn" android:layout_alignParentBottom="true"/>
+
+            <Button android:layout_width="wrap_content"
+                    android:text="Delete"
+                    android:onClick="@{() ->  callback.onDeleteClick(group)}"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/delete_btn"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentEnd="true"/>
+
+            <Button android:layout_width="wrap_content"
+                    android:text="View"
+                    android:onClick="@{() ->  callback.onClick(group)}"
+                    android:id="@+id/view_btn"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_toStartOf="@+id/delete_btn"/>
+        </RelativeLayout>
+
+    </androidx.cardview.widget.CardView>
+</layout>

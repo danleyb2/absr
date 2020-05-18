@@ -4,6 +4,8 @@ import androidx.annotation.Nullable;
 import androidx.room.*;
 import com.sifhic.absr.model.Product;
 
+import java.util.Date;
+
 @Entity(tableName = "products",
         foreignKeys = {
                 @ForeignKey(entity = GroupEntity.class,
@@ -19,8 +21,10 @@ public class ProductEntity implements Product {
     private String label;
     private String asin;
     private long groupId;
-    private boolean updated;
 
+    private boolean updated;
+    @Nullable
+    private Date updatedAt;
     @Nullable
     private int rank;
 
@@ -78,6 +82,22 @@ public class ProductEntity implements Product {
     }
     public ProductEntity() {
     }
+
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    @Override
+    public String getStatus() {
+        return this.isUpdated()?"Updated":"Not Updated";
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+
 
     @Ignore
     public ProductEntity(long id, long groupId, String label, String asin, int rank) {

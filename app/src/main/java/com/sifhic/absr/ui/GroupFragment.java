@@ -13,41 +13,41 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.sifhic.absr.R;
-import com.sifhic.absr.databinding.ProductFragmentBinding;
-import com.sifhic.absr.viewmodel.ProductViewModel;
+import com.sifhic.absr.databinding.GroupFragmentBinding;
+import com.sifhic.absr.viewmodel.GroupViewModel;
 
-public class ProductFragment extends Fragment {
+public class GroupFragment extends Fragment {
 
-    private static final String KEY_PRODUCT_ID = "product_id";
+    private static final String KEY_GROUP_ID = "product_id";
 
-    private ProductFragmentBinding mBinding;
+    private GroupFragmentBinding mBinding;
 
-    private CommentAdapter mCommentAdapter;
+    private ProductAdapter mProductAdapter;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
             @Nullable Bundle savedInstanceState) {
         // Inflate this data binding layout
-        mBinding = DataBindingUtil.inflate(inflater, R.layout.product_fragment, container, false);
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.group_fragment, container, false);
 
         // Create and set the adapter for the RecyclerView.
-        mCommentAdapter = new CommentAdapter(mCommentClickCallback);
-        mBinding.commentList.setAdapter(mCommentAdapter);
+        mProductAdapter = new ProductAdapter(mProductClickCallback);
+        mBinding.commentList.setAdapter(mProductAdapter);
         return mBinding.getRoot();
     }
 
-    private final CommentClickCallback mCommentClickCallback = comment -> {
+    private final ProductClickCallback mProductClickCallback = comment -> {
         // no-op
     };
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        ProductViewModel.Factory factory = new ProductViewModel.Factory(
-                requireActivity().getApplication(), requireArguments().getLong(KEY_PRODUCT_ID));
+        GroupViewModel.Factory factory = new GroupViewModel.Factory(
+                requireActivity().getApplication(), requireArguments().getLong(KEY_GROUP_ID));
 
-        final ProductViewModel model = new ViewModelProvider(this, factory)
-                .get(ProductViewModel.class);
+        final GroupViewModel model = new ViewModelProvider(this, factory)
+                .get(GroupViewModel.class);
 
         mBinding.setLifecycleOwner(getViewLifecycleOwner());
         mBinding.setProductViewModel(model);
@@ -55,12 +55,12 @@ public class ProductFragment extends Fragment {
         subscribeToModel(model);
     }
 
-    private void subscribeToModel(final ProductViewModel model) {
+    private void subscribeToModel(final GroupViewModel model) {
         // Observe comments
         model.getComments().observe(getViewLifecycleOwner(), commentEntities -> {
             if (commentEntities != null) {
                 mBinding.setIsLoading(false);
-                mCommentAdapter.submitList(commentEntities);
+                mProductAdapter.submitList(commentEntities);
             } else {
                 mBinding.setIsLoading(true);
             }
@@ -70,15 +70,15 @@ public class ProductFragment extends Fragment {
     @Override
     public void onDestroyView() {
         mBinding = null;
-        mCommentAdapter = null;
+        mProductAdapter = null;
         super.onDestroyView();
     }
 
     /** Creates product fragment for specific product ID */
-    public static ProductFragment forProduct(long productId) {
-        ProductFragment fragment = new ProductFragment();
+    public static GroupFragment forProduct(long productId) {
+        GroupFragment fragment = new GroupFragment();
         Bundle args = new Bundle();
-        args.putLong(KEY_PRODUCT_ID, productId);
+        args.putLong(KEY_GROUP_ID, productId);
         fragment.setArguments(args);
         return fragment;
     }

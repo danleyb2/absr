@@ -1,12 +1,10 @@
 package com.sifhic.absr.ui;
 
 import android.os.Bundle;
-import android.text.Editable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
@@ -14,13 +12,11 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
-
-import androidx.work.Data;
 import androidx.work.WorkInfo;
-import com.sifhic.absr.Constants;
 import com.sifhic.absr.R;
 import com.sifhic.absr.databinding.ListFragmentBinding;
-import com.sifhic.absr.db.entity.ProductEntity;
+import com.sifhic.absr.db.entity.GroupEntity;
+import com.sifhic.absr.model.Group;
 import com.sifhic.absr.viewmodel.ProductListViewModel;
 
 import java.util.List;
@@ -29,8 +25,8 @@ public class ProductListFragment extends Fragment {
 
     public static final String TAG = "ProductListFragment";
 
-    private ProductAdapter mProductAdapter;
-
+    private GroupAdapter mGroupAdapter;
+    private ProductListViewModel viewModel;
     private ListFragmentBinding mBinding;
 
     @Nullable
@@ -40,8 +36,8 @@ public class ProductListFragment extends Fragment {
 
 
         mBinding = DataBindingUtil.inflate(inflater, R.layout.list_fragment, container, false);
-        mProductAdapter = new ProductAdapter(mProductClickCallback);
-        mBinding.productsList.setAdapter(mProductAdapter);
+        mGroupAdapter = new GroupAdapter(mGroupClickCallback);
+        mBinding.productsList.setAdapter(mGroupAdapter);
         mBinding.setCallback(mAddProductsClickCallback);
 
         return mBinding.getRoot();
@@ -50,12 +46,12 @@ public class ProductListFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        final ProductListViewModel viewModel =
-                new ViewModelProvider(this).get(ProductListViewModel.class);
+
+        viewModel = new ViewModelProvider(this).get(ProductListViewModel.class);
 
 
         mBinding.productsRefreshBtn.setOnClickListener(v -> {
-            viewModel.refresh();
+            viewModel.refreshAll();
         });
 
         viewModel.getOutputWorkInfo().observe(getViewLifecycleOwner(), listOfWorkInfo -> {
@@ -82,25 +78,25 @@ public class ProductListFragment extends Fragment {
             }
         });
 
-        subscribeUi(viewModel.getProducts());
+        subscribeUi(viewModel.getGroups());
     }
 
     private void showWorkInProgress(){
         mBinding.productsRefreshBtn.setEnabled(false);
-        mBinding.productsRefreshBtn.setText("Refreshing...");
+        mBinding.productsRefreshBtn.setText(R.string.refreshing);
     }
 
     private void showWorkFinished(){
         mBinding.productsRefreshBtn.setEnabled(true);
-        mBinding.productsRefreshBtn.setText("Refresh");
+        mBinding.productsRefreshBtn.setText(R.string.refresh_all);
     }
 
-    private void subscribeUi(LiveData<List<ProductEntity>> liveData) {
+    private void subscribeUi(LiveData<List<GroupEntity>> liveData) {
         // Update the list when the data changes
         liveData.observe(getViewLifecycleOwner(), myProducts -> {
             if (myProducts != null) {
                 mBinding.setIsLoading(false);
-                mProductAdapter.setProductList(myProducts);
+                mGroupAdapter.setGroupList(myProducts);
             } else {
                 mBinding.setIsLoading(true);
             }
@@ -113,15 +109,39 @@ public class ProductListFragment extends Fragment {
     @Override
     public void onDestroyView() {
         mBinding = null;
-        mProductAdapter = null;
+        mGroupAdapter = null;
         super.onDestroyView();
     }
 
-    private final ProductClickCallback mProductClickCallback = product -> {
-        if (getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
-           // TODO ((MainActivity) requireActivity()).show(product);
+
+
+    private final GroupClickCallback mGroupClickCallback = new GroupClickCallback() {
+        @Override
+        public void onClick(Group group) {
+            if (getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
+                ((MainActivity) requireActivity()).show(group);
+            }
+        }
+
+        @Override
+        public void onRefreshClick(Group group) {
+            viewModel.refreshGroup(group);
+        }
+
+        @Override
+        public void onEditClick(Group group) {
+            if (getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
+                ((MainActivity) requireActivity()).showEditProduct(group);
+            }
+        }
+
+        @Override
+        public void onDeleteClick(Group group) {
+            viewModel.deleteGroup(group);
         }
     };
+
+
     private final AddProductsClickCallback mAddProductsClickCallback = () -> {
         if (getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
             ((MainActivity) requireActivity()).showAddProduct();

@@ -12,7 +12,7 @@
 
         <variable
             name="productViewModel"
-            type="com.sifhic.absr.viewmodel.ProductViewModel"/>
+            type="com.sifhic.absr.viewmodel.GroupViewModel"/>
     </data>
 
     <LinearLayout
@@ -22,8 +22,8 @@
         android:orientation="vertical">
 
         <include
-            layout="@layout/product_item"
-            app:product="@{productViewModel.product}"
+            layout="@layout/group_item_details"
+            app:group="@{productViewModel.group}"
             />
         <!---->
 

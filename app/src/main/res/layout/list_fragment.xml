@@ -43,12 +43,12 @@
         </LinearLayout>
 
         <Button android:layout_width="match_parent"
-                android:text="Refresh"
+                android:text="@string/refresh_all"
                 android:id="@+id/products_refresh_btn"
                 android:layout_height="wrap_content"/>
 
         <Button android:layout_width="match_parent"
-                android:text="Add Products"
+                android:text="@string/add_new_group"
                 android:onClick="@{() -> callback.onClick()}"
                 android:layout_height="wrap_content"/>
 

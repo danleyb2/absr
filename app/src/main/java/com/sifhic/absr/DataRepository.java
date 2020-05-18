@@ -3,7 +3,6 @@ package com.sifhic.absr;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import com.sifhic.absr.db.AppDatabase;
-import com.sifhic.absr.db.entity.CommentEntity;
 import com.sifhic.absr.db.entity.GroupEntity;
 import com.sifhic.absr.db.entity.ProductEntity;
 import com.sifhic.absr.model.Product;
@@ -18,16 +17,16 @@ public class DataRepository {
     private static DataRepository sInstance;
 
     private final AppDatabase mDatabase;
-    private MediatorLiveData<List<ProductEntity>> mObservableProducts;
+    private MediatorLiveData<List<GroupEntity>> mObservableProducts;
 
     private DataRepository(final AppDatabase database) {
         mDatabase = database;
         mObservableProducts = new MediatorLiveData<>();
 
-        mObservableProducts.addSource(mDatabase.productDao().loadAllProducts(),
-                productEntities -> {
+        mObservableProducts.addSource(mDatabase.groupDao().loadAllGroups(),
+                groupEntities -> {
                     if (mDatabase.getDatabaseCreated().getValue() != null) {
-                        mObservableProducts.postValue(productEntities);
+                        mObservableProducts.postValue(groupEntities);
                     }
                 });
     }
@@ -57,7 +56,7 @@ public class DataRepository {
     /**
      * Get the list of products from the database and get notified when the data changes.
      */
-    public LiveData<List<ProductEntity>> getProducts() {
+    public LiveData<List<GroupEntity>> getGroups() {
         return mObservableProducts;
     }
 
@@ -65,8 +64,16 @@ public class DataRepository {
         return mDatabase.productDao().loadProduct(productId);
     }
 
+    public LiveData<GroupEntity> loadGroupLive(final long groupId) {
+        return mDatabase.groupDao().loadGroup(groupId);
+    }
+
     public ProductEntity loadProductSync(final long productId) {
         return mDatabase.productDao().loadProductSync(productId);
+    }
+
+    public List<ProductEntity> loadProducts() {
+        return mDatabase.productDao().loadAllProductsSync();
     }
 
     public void updateProductSync(final long productId,int rank) {
@@ -81,8 +88,16 @@ public class DataRepository {
         return mDatabase.groupDao().loadGroupSync(groupId);
     }
 
-    public LiveData<List<CommentEntity>> loadComments(final long productId) {
-        return mDatabase.commentDao().loadComments(productId);
+    public LiveData<List<ProductEntity>> loadProducts(final long groupId) {
+        return mDatabase.productDao().loadGroupProducts(groupId);
+    }
+
+    public List<ProductEntity> loadGroupProductsSync(final long groupId) {
+        return mDatabase.productDao().loadGroupProductsSync(groupId);
+    }
+
+    public void deleteGroup(final long groupId) {
+        mDatabase.groupDao().deleteGroup(groupId);
     }
 
 }

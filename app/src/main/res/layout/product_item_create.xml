@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable name="product"
+                  type="com.sifhic.absr.db.entity.ProductEntity"/>
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/product_item_create_min_height"
+        android:orientation="horizontal"
+        android:layout_marginStart="@dimen/item_horizontal_margin"
+        android:layout_marginEnd="@dimen/item_horizontal_margin"
+        app:cardUseCompatPadding="true">
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/cardview_light_background"
+                android:orientation="horizontal">
+
+            <EditText
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:inputType="text"
+                    android:hint="Label"
+                    android:text="@={product.label}"
+                    android:layout_height="wrap_content"/>
+
+            <EditText
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:hint="Asin"
+                    android:inputType="textCapCharacters"
+                    android:text="@={product.asin}"
+                    android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+</layout>

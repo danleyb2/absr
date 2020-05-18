@@ -1,19 +1,20 @@
 package com.sifhic.absr.viewmodel;
 
 import android.app.Application;
-import android.text.TextUtils;
+import android.os.AsyncTask;
 import androidx.annotation.NonNull;
-import androidx.arch.core.util.Function;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.SavedStateHandle;
-import androidx.lifecycle.Transformations;
 import androidx.work.*;
 import com.sifhic.absr.BasicApp;
 import com.sifhic.absr.DataRepository;
+import com.sifhic.absr.db.entity.GroupEntity;
 import com.sifhic.absr.db.entity.ProductEntity;
+import com.sifhic.absr.model.Group;
 import com.sifhic.absr.model.Product;
 import com.sifhic.absr.workers.ScrapeWorker;
+import com.sifhic.absr.workers.WorkerUtils;
 
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class ProductListViewModel extends AndroidViewModel {
     private WorkManager mWorkManager;
     private LiveData<List<WorkInfo>> mSavedWorkInfo;
 
-    private final LiveData<List<ProductEntity>> mProducts;
+    private final LiveData<List<GroupEntity>> mGroups;
 
     public ProductListViewModel(@NonNull Application application,
                                 @NonNull SavedStateHandle savedStateHandle) {
@@ -45,7 +46,7 @@ public class ProductListViewModel extends AndroidViewModel {
         // allowing us to recalculate what LiveData to get from the DataRepository
         // based on what query the user has entered
 
-        mProducts = mRepository.getProducts();
+        mGroups = mRepository.getGroups();
     }
 
     /**
@@ -55,33 +56,19 @@ public class ProductListViewModel extends AndroidViewModel {
         return mSavedWorkInfo;
     }
 
-
-    /**
-     * Creates the input data bundle which includes the Uri to operate on
-     *
-     * @return Data which contains the Image Uri as a String
-     */
-    private Data createInputDataForProduct(Product product) {
-        Data.Builder builder = new Data.Builder();
-        builder.putLong(KEY_IMAGE_URI, product.getId());
-
-        return builder.build();
-    }
-
-    public void refresh() {
-
+    public void refresh(List<ProductEntity> productEntityList){
         WorkContinuation continuation = null;
-        // List<OneTimeWorkRequest> workRequests =  new ArrayList<>();
 
         // Add WorkRequests to blur the image the number of times requested
-        for (Product product : mRepository.getProducts().getValue()) {
+        for (Product product : productEntityList) {
+            if (product.getAsin().isEmpty())continue;
             OneTimeWorkRequest.Builder blurBuilder = new OneTimeWorkRequest.Builder(ScrapeWorker.class);
-            blurBuilder.setInputData(createInputDataForProduct(product));
+            blurBuilder.setInputData(WorkerUtils.createInputDataForProduct(product));
             blurBuilder.addTag(TAG_OUTPUT); // This adds the tag
 
             if (continuation == null) {
                 continuation = mWorkManager.beginUniqueWork(
-                        IMAGE_MANIPULATION_WORK_NAME,
+                        SCRAPE_WORK_NAME,
                         ExistingWorkPolicy.REPLACE,
                         blurBuilder.build()
                 );
@@ -92,15 +79,53 @@ public class ProductListViewModel extends AndroidViewModel {
             // workRequests.add(blurBuilder.build());
 
         }
-
-        // Create charging constraint
-        Constraints constraints = new Constraints.Builder()
-                .setRequiresCharging(true)
-                .build();
-
+//
+//                // Create charging constraint
+//                Constraints constraints = new Constraints.Builder()
+//                        .setRequiresCharging(true)
+//                        .build();
+//
 
         // Start the work
         if (continuation != null) continuation.enqueue();
+
+    }
+
+    public void refreshAll() {
+
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                List<ProductEntity> productEntityList = mRepository.loadProducts();
+                ProductListViewModel.this.refresh(productEntityList);
+
+            }
+        });
+
+
+    }
+
+
+    public void refreshGroup(Group group) {
+
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+
+                List<ProductEntity> productEntityList = mRepository.loadGroupProductsSync(group.getId());
+                ProductListViewModel.this.refresh(productEntityList);
+
+            }
+        });
+    }
+
+    public void deleteGroup(Group group){
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                mRepository.deleteGroup(group.getId());
+            }
+        });
 
     }
 
@@ -108,13 +133,13 @@ public class ProductListViewModel extends AndroidViewModel {
      * Cancel work using the work's unique name
      */
     void cancelWork() {
-        mWorkManager.cancelUniqueWork(IMAGE_MANIPULATION_WORK_NAME);
+        mWorkManager.cancelUniqueWork(SCRAPE_WORK_NAME);
     }
 
     /**
      * Expose the LiveData Products query so the UI can observe it.
      */
-    public LiveData<List<ProductEntity>> getProducts() {
-        return mProducts;
+    public LiveData<List<GroupEntity>> getGroups() {
+        return mGroups;
     }
 }

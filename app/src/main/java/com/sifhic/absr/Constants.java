@@ -15,14 +15,17 @@ public final class Constants {
     public static final int NOTIFICATION_ID = 1;
 
     // The name of the image manipulation work
-  public   static final String IMAGE_MANIPULATION_WORK_NAME = "image_manipulation_work";
+  public   static final String SCRAPE_WORK_NAME = "image_manipulation_work";
 
     // Other keys
-    public static final String OUTPUT_PATH = "blur_filter_outputs";
-    public static final String KEY_IMAGE_URI = "KEY_IMAGE_URI";
+
+    public static final String KEY_PRODUCT_ID = "KEY_PRODUCT_ID";
     public static final String TAG_OUTPUT = "OUTPUT";
 
     public static final long DELAY_TIME_MILLIS = 10000;
+
+    public static final String DEFAULT_CATEGORY =  "Antitheft Remote Starters";
+    public static final int GROUP_PRODUCTS_COUNT = 10;
 
     // Ensures this class is never instantiated
     private Constants() {}

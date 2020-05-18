@@ -30,7 +30,10 @@ public abstract class GroupDao {
     @Query("select * from groups where id = :groupId")
     public abstract GroupEntity loadGroupSync(long groupId);
 
-    @Insert
+    @Query("delete from groups where id = :groupId")
+    public abstract void deleteGroup(long groupId);
+
+    @Insert(onConflict = REPLACE)
     public abstract void insert(ProductEntity productEntity);
 
     @Transaction

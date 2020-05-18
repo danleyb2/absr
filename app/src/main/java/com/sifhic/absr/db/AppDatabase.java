@@ -13,10 +13,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import com.sifhic.absr.AppExecutors;
 import com.sifhic.absr.db.converter.DateConverter;
-import com.sifhic.absr.db.dao.CommentDao;
+
 import com.sifhic.absr.db.dao.GroupDao;
 import com.sifhic.absr.db.dao.ProductDao;
-import com.sifhic.absr.db.entity.CommentEntity;
+
 import com.sifhic.absr.db.entity.GroupEntity;
 import com.sifhic.absr.db.entity.ProductEntity;
 
@@ -26,8 +26,7 @@ import java.util.List;
 
 @Database(entities = {
         ProductEntity.class,
-        GroupEntity.class,
-        CommentEntity.class
+        GroupEntity.class
 }, version = 3)
 @TypeConverters(DateConverter.class)
 public abstract class AppDatabase extends RoomDatabase {
@@ -39,7 +38,6 @@ public abstract class AppDatabase extends RoomDatabase {
 
     public abstract ProductDao productDao();
 
-    public abstract CommentDao commentDao();
     public abstract GroupDao groupDao();
 
     private final MutableLiveData<Boolean> mIsDatabaseCreated = new MutableLiveData<>();

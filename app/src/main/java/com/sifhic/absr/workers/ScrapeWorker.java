@@ -14,7 +14,7 @@ import com.sifhic.absr.scrapper.Amazon;
 
 import java.util.ArrayList;
 
-import static com.sifhic.absr.Constants.KEY_IMAGE_URI;
+import static com.sifhic.absr.Constants.KEY_PRODUCT_ID;
 
 
 public class ScrapeWorker  extends Worker {
@@ -34,7 +34,7 @@ public class ScrapeWorker  extends Worker {
 
          DataRepository repository = ((BasicApp) applicationContext).getRepository();
 
-        long productId = getInputData().getLong(KEY_IMAGE_URI,0);
+        long productId = getInputData().getLong(KEY_PRODUCT_ID,0);
         // Makes a notification when the work starts and slows down the work so that it's easier to
         // see each WorkRequest start, even on emulated devices
         WorkerUtils.makeStatusNotification("Refreshing product: "+productId, applicationContext);
@@ -69,6 +69,7 @@ public class ScrapeWorker  extends Worker {
             // but it's best to be explicit about it.
             // Thus if there were errors, we're return FAILURE
             Log.e(TAG, "Error scrapping Amazon", throwable);
+            repository.updateProductSync(productId,false);
             return Result.failure();
         }
         return Result.success();
