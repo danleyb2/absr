@@ -27,7 +27,7 @@ import java.util.List;
 @Database(entities = {
         ProductEntity.class,
         GroupEntity.class
-}, version = 3)
+}, version = 4)
 @TypeConverters(DateConverter.class)
 public abstract class AppDatabase extends RoomDatabase {
 

@@ -7,7 +7,7 @@ public interface Product {
     long getGroupId();
     String getLabel();
     String getAsin();
-    int getRank();
+    String getRank();
     boolean isUpdated();
     Date getUpdatedAt();
     String getStatus();

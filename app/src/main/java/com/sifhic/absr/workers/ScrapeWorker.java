@@ -1,5 +1,6 @@
 package com.sifhic.absr.workers;
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.Pair;
 import androidx.annotation.NonNull;
@@ -39,28 +40,21 @@ public class ScrapeWorker  extends Worker {
         // see each WorkRequest start, even on emulated devices
         WorkerUtils.makeStatusNotification("Refreshing product: "+productId, applicationContext);
 
-
         ProductEntity product = repository.loadProductSync(productId);
         GroupEntity group = repository.loadGroup(product.getGroupId());
 
         try {
             Log.i(TAG,"Refreshing Product: "+productId);
-            ArrayList<Pair<String,Integer>> bsRanks = Amazon.bestSellerRanks(product.getAsin());
+            ArrayList<String> bsRanks = Amazon.bestSellerRanks(product.getAsin());
             if (bsRanks.isEmpty()){
                 repository.updateProductSync(productId,false);
             }else {
-                boolean categoryFound = false;
-                for (Pair<String, Integer> cRank : bsRanks) {
-                    if (cRank.first.toLowerCase().equals(group.getCategory().toLowerCase())){
-                        categoryFound = true;
-                        product.setRank(cRank.second);
-                        repository.updateProductSync(productId,product.getRank());
-                        repository.updateProductSync(productId,true);
-                    }
-                }
-
-                if (!categoryFound){
+                if (bsRanks.isEmpty()){
                     repository.updateProductSync(productId,false);
+                }else {
+                    product.setRank(TextUtils.join("|",bsRanks));
+                    repository.updateProductSync(productId,product.getRank());
+                    repository.updateProductSync(productId,true);
                 }
             }
 

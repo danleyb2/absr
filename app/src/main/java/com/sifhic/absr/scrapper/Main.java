@@ -21,6 +21,9 @@ public class Main {
         String assyf150 ="https://www.amazon.com/dp/B082TNG8SP";
         String sifhic = "https://api.sifhic.com/";
 
+        System.out.println("br(i)an".substring(0,"bri)an".indexOf("(")));
+
+
 //        try {
 //            String response = new Main().run(fortinf150);
 //            System.out.println(response);
@@ -33,7 +36,7 @@ public class Main {
             Document doc = Jsoup.parse(input, "UTF-8", "http://example.com/");
             // System.out.println(doc);
 
-            Amazon.parseDoc(doc);
+          //  Amazon.parseDoc(doc);
             // System.out.println(productDetailsTableBody);
         } catch (IOException e) {
             e.printStackTrace();

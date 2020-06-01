@@ -3,6 +3,6 @@
     <string name="product_price">Rank: #%d</string>
     <string name="product_status">Status: %s</string>
     <string name="group_products">Products: %d</string>
-    <dimen name="product_item_min_height">70dp</dimen>
+    <dimen name="product_item_min_height">40dp</dimen>
     <dimen name="product_item_create_min_height">50dp</dimen>
 </resources>

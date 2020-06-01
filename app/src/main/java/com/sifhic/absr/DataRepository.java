@@ -76,7 +76,7 @@ public class DataRepository {
         return mDatabase.productDao().loadAllProductsSync();
     }
 
-    public void updateProductSync(final long productId,int rank) {
+    public void updateProductSync(final long productId,String rank) {
         mDatabase.productDao().update(productId,rank);
     }
 

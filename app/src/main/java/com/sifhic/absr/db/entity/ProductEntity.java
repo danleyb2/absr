@@ -26,7 +26,7 @@ public class ProductEntity implements Product {
     @Nullable
     private Date updatedAt;
     @Nullable
-    private int rank;
+    private String rank;
 
     @Override
     public boolean isUpdated() {
@@ -74,10 +74,10 @@ public class ProductEntity implements Product {
 
 
     @Override
-    public int getRank() {
+    public String getRank() {
         return rank;
     }
-    public void setRank(int rank) {
+    public void setRank(String rank) {
         this.rank = rank;
     }
     public ProductEntity() {
@@ -100,7 +100,7 @@ public class ProductEntity implements Product {
 
 
     @Ignore
-    public ProductEntity(long id, long groupId, String label, String asin, int rank) {
+    public ProductEntity(long id, long groupId, String label, String asin, String rank) {
         this.id = id;
         this.groupId = groupId;
         this.label = label;

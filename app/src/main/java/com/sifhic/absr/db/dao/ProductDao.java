@@ -28,7 +28,7 @@ public interface ProductDao {
      * Updating only rank
      */
     @Query("UPDATE products SET rank=:rank WHERE id = :productId")
-    void update(long productId, int rank);
+    void update(long productId, String rank);
 
     /**
      * Updating only updated

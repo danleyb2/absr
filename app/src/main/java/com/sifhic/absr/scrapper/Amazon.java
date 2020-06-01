@@ -18,7 +18,7 @@ import java.util.ArrayList;
 public class Amazon {
     public static final String TAG = Amazon.class.getSimpleName();
 
-    public static ArrayList<Pair<String,Integer>> bestSellerRanks(String asin){
+    public static ArrayList<String> bestSellerRanks(String asin){
         String url = "https://www.amazon.com/dp/"+asin;
         try {
             String response = Amazon.run(url);
@@ -34,8 +34,8 @@ public class Amazon {
         return new ArrayList<>();
     }
 
-    public static ArrayList<Pair<String,Integer>> parseDoc(Document doc){
-        ArrayList<Pair<String,Integer>> ranks = new ArrayList<>();
+    public static ArrayList<String> parseDoc(Document doc){
+        ArrayList<String> ranks = new ArrayList<>();
 
         Element productDetailsTable = doc.getElementById("productDetails_detailBullets_sections1");
         Element productDetailsTableBody = productDetailsTable.child(0);
@@ -50,17 +50,12 @@ public class Amazon {
                 for (Element rankSpan : rankSpans) {
                     if (rankSpan.tagName().toUpperCase().equals("SPAN")) {
                         System.out.println(rankSpan);
-                        String rankSpanText = rankSpan.ownText();
-                        String rank = rankSpanText.split(" ")[0];
-                        rank = rank.replaceAll(",","");
-                        rank = rank.replaceAll("#","");
-
-                        Element link = rankSpan.getElementsByTag("a").first();
-                        String category = link.text();
-                        System.out.println("Rank: "+rank+" Category: "+category);
-
-                        ranks.add(new Pair<>(category, Integer.parseInt(rank)));
-
+                        String rankSpanText = rankSpan.text();
+                        if (rankSpanText.contains("(")){
+                           rankSpanText = rankSpanText.substring(  0,rankSpanText.indexOf("("));
+                        }
+                        System.out.println("Rank: "+rankSpanText);
+                        ranks.add(rankSpanText);
                     }
                 }
             }
